@@ -1,16 +1,19 @@
-# This is a sample Python script.
+import logging
+import logging.config
+import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from controller.main_controller import MainController
 
 
-# Press the green button in the gutter to run the script.
+def conf_log():
+    log_filename = "logs/rs.log"
+    os.makedirs(os.path.dirname(log_filename), exist_ok=True)
+
+    logging.config.fileConfig('conf/logging.conf')
+    logging.root.setLevel(logging.NOTSET)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    conf_log()
+    main_ctl = MainController()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
