@@ -12,13 +12,13 @@ class Trainner:
 
     def convert_rating_to_user_item(self):
         try:
-            print(Constants.DATASET_MANH8)
-            ratings = pd.read_csv(Constants.DATASET_MANH8, delimiter=',')
+            print(Constants.DATASET_MANH1)
+            ratings = pd.read_csv(Constants.DATASET_MANH1, delimiter=',')
 
             users = ratings.loc[0:, 'user_id'].unique()
             hotels = ratings.loc[0:, 'hotel_id'].unique()
 
-            matrix_rating = pd.DataFrame(index=users, columns=hotels)
+            matrix_rating = pd.DataFrame(index=users, columns=hotels, dtype='float64')
 
             total_row = len(ratings)
             for i in range(0, total_row):
@@ -42,110 +42,118 @@ class Trainner:
                     if math.isnan(score):
                         matrix_rating.loc[userId, hotelId] = 0
 
-            matrix_rating.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh8.csv", sep=',')
-            return matrix_rating;
+            matrix_rating.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh1.csv", sep=',')
+            U, S, V = np.linalg.svd(matrix_rating)
+            V_transpose = V.transpose()
+            print("Thực hiện transpose thành công")
+            matrix_A= U.dot(S).dot(V_transpose)
+            print("Tính ma trận A thành công ",matrix_A)
+            # matrix_A.to_csv(Constants.DATASETS_DIRECTORY_OUT + "sdv-user-hotel-manh1.csv", sep=',')
             print("Complete !")
 
         except Exception as e1:
             print(e1)
 
-    def fill_zero(self):
-        user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh8.csv", sep=',')
 
-        users = user_item_rating.index.tolist()[1:]
-        hotels = user_item_rating.columns.tolist()[1:]
+def fill_zero(self):
+    user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh8.csv", sep=',')
 
-        print(users)
-        print(hotels)
+    users = user_item_rating.index.tolist()[1:]
+    hotels = user_item_rating.columns.tolist()[1:]
 
-        for i in range(0, len(users)):
-            for j in range(0, len(hotels)):
-                try:
-                    userId = users[i]
-                    hotelId = str(hotels[j])
+    print(users)
+    print(hotels)
 
-                    score = int(user_item_rating.loc[userId, hotelId])
-                except Exception:
-                    score = 0
-                    user_item_rating.loc[users[i], hotels[j]] = score
+    for i in range(0, len(users)):
+        for j in range(0, len(hotels)):
+            try:
+                userId = users[i]
+                hotelId = str(hotels[j])
 
-                print(score)
+                score = int(user_item_rating.loc[userId, hotelId])
+            except Exception:
+                score = 0
+                user_item_rating.loc[users[i], hotels[j]] = score
 
-        user_item_rating.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-item.csv", sep=',')
-        return
+            print(score)
 
-    def calculate_similar_item_item(self):
-        user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh8.csv", index_col=0)
-        items = user_item_rating.columns.tolist()
+    user_item_rating.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-item.csv", sep=',')
+    return
 
-        item_base = pd.DataFrame(index=items, columns=items)
-        num_item = len(items)
 
-        for i in range(0, num_item):
-            for j in range(i, num_item):
-                try:
-                    # The usual creation of arrays produces wrong format (as cosine_similarity works on matrices)
-                    x = np.array(user_item_rating.iloc[:, i].tolist())
-                    y = np.array(user_item_rating.iloc[:, j].tolist())
+def calculate_similar_item_item(self):
+    user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh1.csv", index_col=0)
+    items = user_item_rating.columns.tolist()
 
-                    # Need to reshape these
-                    x = x.reshape(1, -1)
-                    y = y.reshape(1, -1)
+    item_base = pd.DataFrame(index=items, columns=items)
+    num_item = len(items)
 
-                    # calculate similar between two items
-                    if not i == j:
-                        item_base.iloc[i, j] = cosine_similarity(x, y)[0][0]
-                        item_base.iloc[j, i] = cosine_similarity(x, y)[0][0]
-                    else:
-                        item_base.iloc[i, j] = 1
+    for i in range(0, num_item):
+        for j in range(i, num_item):
+            try:
+                # The usual creation of arrays produces wrong format (as cosine_similarity works on matrices)
+                x = np.array(user_item_rating.iloc[:, i].tolist())
+                y = np.array(user_item_rating.iloc[:, j].tolist())
 
-                except Exception as e:
-                    print(e)
+                # Need to reshape these
+                x = x.reshape(1, -1)
+                y = y.reshape(1, -1)
 
-                print(str(i) + "/" + str(num_item))
+                # calculate similar between two items
+                if not i == j:
+                    item_base.iloc[i, j] = cosine_similarity(x, y)[0][0]
+                    item_base.iloc[j, i] = cosine_similarity(x, y)[0][0]
+                else:
+                    item_base.iloc[i, j] = 1
 
-        item_base.to_csv(Constants.DATASETS_DIRECTORY_OUT + "item-item-similar-manh8.csv")
-        print("Complete item-item-similar!")
+            except Exception as e:
+                print(e)
 
-    def calculate_similar_user_user(self):
-        user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh8.csv", index_col=0)
-        users = user_item_rating.index.tolist()
+            print(str(i) + "/" + str(num_item))
 
-        users_items_userbase = pd.DataFrame(index=users, columns=users)
+    item_base.to_csv(Constants.DATASETS_DIRECTORY_OUT + "item-item-similar-manh1.csv")
+    print("Complete item-item-similar!")
 
-        num_users = len(users)
 
-        for i in range(0, num_users):
-            for j in range(i, num_users):
-                try:
-                    # The usual creation of arrays produces wrong format (as cosine_similarity works on matrices)
-                    x = np.array(user_item_rating.iloc[i, :].tolist())
-                    y = np.array(user_item_rating.iloc[j, :].tolist())
+def calculate_similar_user_user(self):
+    user_item_rating = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh1.csv", index_col=0)
+    users = user_item_rating.index.tolist()
 
-                    # Need to reshape these
-                    x = x.reshape(1, -1)
-                    y = y.reshape(1, -1)
+    users_items_userbase = pd.DataFrame(index=users, columns=users)
 
-                    # calculate similar between two items
-                    if not i == j:
-                        users_items_userbase.iloc[i, j] = cosine_similarity(x, y)[0][0]
-                        users_items_userbase.iloc[j, i] = cosine_similarity(x, y)[0][0]
-                    else:
-                        users_items_userbase.iloc[i, j] = 1
+    num_users = len(users)
 
-                except Exception as e:
-                    print(e)
+    for i in range(0, num_users):
+        for j in range(i, num_users):
+            try:
+                # The usual creation of arrays produces wrong format (as cosine_similarity works on matrices)
+                x = np.array(user_item_rating.iloc[i, :].tolist())
+                y = np.array(user_item_rating.iloc[j, :].tolist())
 
-        users_items_userbase.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-user-similar-manh8.csv")
-        print("Caclutor Complete !")
+                # Need to reshape these
+                x = x.reshape(1, -1)
+                y = y.reshape(1, -1)
 
-    def calculate_svd(matrix_rate):
-        A = np.array(matrix_rate);
+                # calculate similar between two items
+                if not i == j:
+                    users_items_userbase.iloc[i, j] = cosine_similarity(x, y)[0][0]
+                    users_items_userbase.iloc[j, i] = cosine_similarity(x, y)[0][0]
+                else:
+                    users_items_userbase.iloc[i, j] = 1
 
+            except Exception as e:
+                print(e)
+
+    users_items_userbase.to_csv(Constants.DATASETS_DIRECTORY_OUT + "user-user-similar-manh1.csv")
+    print("Caclutor Complete !")
+
+
+def calculate_svd(matrix_rate):
+    A = np.array(matrix_rate);
 
 
 train = Trainner()
-# train.convert_rating_to_user_item()
+train.convert_rating_to_user_item()
 # # train.fill_zero()
 # train.calculate_similar_user_user()
-train.calculate_similar_item_item()
+# train.calculate_similar_item_item()
