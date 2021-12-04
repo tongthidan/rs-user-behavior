@@ -17,3 +17,9 @@ if __name__ == '__main__':
     conf_log()
     main_ctl = MainController()
 
+    # TODO: refactor code
+    # replace print -> logger
+#     print info -> logger info
+#       print error -> logger expection
+# log info in work flow
+

@@ -1,9 +1,7 @@
 class Constants:
-    ROOT_DIRECTORY = "E:\DoAn"
-
-    DATASETS_DIRECTORY_INPUT = "E:\\DoAn\\Source\\rs-user-behavior\\data\\INPUT\\"
-    DATASETS_DIRECTORY_IN_TRAIN = "E:\\DoAn\\Source\\rs-user-behavior\\data\\IN_TRAIN\\"
-    DATASETS_DIRECTORY_OUT_TRAIN = "E:\\DoAn\\Source\\rs-user-behavior\\data\\OUT_TRAIN\\"
+    DATASETS_DIRECTORY_INPUT = "data\\INPUT\\"
+    DATASETS_DIRECTORY_IN_TRAIN = "data\\IN_TRAIN\\"
+    DATASETS_DIRECTORY_OUT_TRAIN = "data\\OUT_TRAIN\\"
     # raw
     DATASET_USER = DATASETS_DIRECTORY_INPUT + "tbluser.csv"
     DATASET_HOTEL = DATASETS_DIRECTORY_INPUT + "tblhotel.csv"
