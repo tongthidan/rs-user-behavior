@@ -7,10 +7,10 @@ from entity.Hotel import Hotel
 class Recommender:
     def __init__(self):
         self
-        self.item_item = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "item-item-similar-manh1.csv", index_col=0)
-        self.user_item = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "user-hotel-manh1.csv", index_col=0)
-        self.user_user = pd.read_csv(Constants.DATASETS_DIRECTORY_OUT + "item-item-similar-manh1.csv", index_col=0)
-        self.items = pd.read_csv(Constants.DATASETS_DIRECTORY_INPUT + "tblhotel.csv", sep=',')
+        self.item_item = pd.read_csv(Constants.DATASET_ITEM_SIMILAR_manh1, index_col=0)
+        self.user_item = pd.read_csv(Constants.DATASET_MATRIX_TRAIN_manh1, index_col=0)
+        self.user_user = pd.read_csv(Constants.DATASET_USER_SIMILAR_manh1, index_col=0)
+        self.items = pd.read_csv(Constants.DATASET_HOTEL, sep=',')
 
     def recommend_top_ten_by_user(self, userId):
         rating_by_user = self.user_item.loc[(self.user_item.index == userId)]
@@ -44,7 +44,7 @@ class Recommender:
                 item = Hotel()
 
                 print(temp.loc[temp['hotel_id'] == itemId, 'name'])
-                print(temp.loc[0,'hotel_id'])
+                print(temp.loc[0, 'hotel_id'])
                 return
 
                 item.convert_data(temp)
