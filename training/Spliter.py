@@ -40,55 +40,31 @@ class Spliter:
         # print(data_train)
 
     def split_data_context(self):
-        data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_testing.csv")
-        # data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_training.csv")
+        # data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_testing.csv")
+        data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_training.csv")
 
-        like = ['0', '1', '']
-        comment = ['0', '1', '']
-        post = ['0', '1', '']
+        like = [0, 1]
+        comment = [0, 1]
+        post = [0, 1]
+        a = len(like)
+        b = len(comment)
+        c = len(post)
+        for i in like:
+            for j in comment:
+                for k in post:
+                    in1 = like[i]
+                    in2 = comment[j]
+                    in3 = post[k]
 
-        for i in range(0, len(like)):
-            for j in range(0, len(comment)):
-                for k in range(0, len(post)):
-                    filename = "dataset_"
-                    drop_columns = []
+                    filename = "dataset_" + str(in1) + "_" + str(in2) + "_" + str(in3)
+                    print("CHECK" + str(in1) + "_" + str(in2) + "_" + str(in3))
+                    data_filter = data.loc[(data['is_like'] == in1)
+                                           & (data['is_comment'] == in2) & (data['is_post'] == in3)]
 
-                    if like[i] != '':
-                        filename += like[i].lower() + "_"
-                        condition_like = data['is_like'] == like[i]
-                        drop_columns.append('is_like')
-                    else:
-                        condition_like = True
-
-                    if comment[j] != '':
-                        filename += comment[j].lower() + "_"
-                        condition_comment = data['is_comment'] == comment[j]
-                        drop_columns.append('is_comment')
-                    else:
-                        condition_comment = True
-
-                    if post[k] != '':
-                        filename += post[k].lower() + "_"
-                        condition_post = data['is_post'] == post[k]
-                        drop_columns.append('is_post')
-                    else:
-                        condition_post = True
-
-                    if filename[len(filename) - 1] == '_':
-                        filename = filename[:len(filename) - 1]
-
-                    full_condition = condition_like & condition_comment & condition_post
-
-                    if (condition_like is True) & (condition_comment is True) & (condition_post is True):
-                        data_filtered = data
-                    else:
-                        data_filtered = data[full_condition]
-
-                    data_filtered = data_filtered.drop(drop_columns, 1)
-                    # data_filtered.to_csv(Constants.TRAINING_SUB_DATASETS_DIRECTORY + "train_" + filename + ".csv",
-                    #                      index=False)
-
-                    data_filtered.to_csv(Constants.TESTING_SUB_DATASETS_DIRECTORY + "test_" + filename + ".csv",
-                                         index=False)
+                    print(data_filter)
+                    data_filter.to_csv(Constants.TRAINING_SUB_DATASETS_DIRECTORY + "train_" + filename + ".csv",
+                                       index=False)
+                    # data_filter.to_csv(Constants.TESTING_SUB_DATASETS_DIRECTORY + "test_" + filename + ".csv",
+                    #                    index=False)
 
         print("Complete !!")

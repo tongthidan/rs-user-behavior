@@ -14,34 +14,12 @@ class Trainner:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def spilit_data_rating(self, path_file_in, user_count, hotel_count, path_file_out):
-        print(path_file_in)
-        ratings = pd.read_csv(path_file_in)
-
-        users = ratings.loc[0:, 'user_id'].unique()
-        items = ratings.loc[0:, 'hotel_id'].unique()
-
-        small_ratings = ratings.loc[
-            (ratings['user_id'] < users[user_count]) & (ratings['hotel_id'] < items[hotel_count])]
-
-        self.logger.info(small_ratings)
-
-        small_ratings.to_csv(path_file_out, sep=',', index=False)
-
     def calculate_sdv_matrix_rating(self, matrix_rating, items, users):
-        # ly thuyet
-        # matrix_A_T = np.transpose(matrix_rating)
-        # matrix_M1 = matrix_rating.dot(matrix_A_T)
-        # w, v = np.linalg.eig(matrix_M1)
-        # matrix_S = np.sqrt(v)
-        # a(n.m) = u(nxn). s(nxm).vh(m.m)
-
         matrix_A_xap_xi = pd.DataFrame(index=users, columns=items)
         u, s, vh = np.linalg.svd(matrix_rating, full_matrices=False)
         smat = np.diag(s)
         matrix_A_xap_xi = u.dot(smat).dot(vh)
         savetxt(Constants.DATASET_MATRIX_TRAIN_manh1, matrix_A_xap_xi, delimiter=',')
-
 
     def convert_rating_to_user_item(self, path_file_in, path_file_train):
         try:
@@ -75,7 +53,7 @@ class Trainner:
                     score = matrix_rating.loc[userId, hotelId]
                     if math.isnan(score):
                         matrix_rating.loc[userId, hotelId] = 0
-            matrix_rating.to_csv(path_file_train, sep=',')
+            # matrix_rating.to_csv(path_file_train, sep=',')
             # tinh svd
             self.logger.info("Start calculate sdv")
             self.calculate_sdv_matrix_rating(matrix_rating, hotels, users)
@@ -117,8 +95,8 @@ class Trainner:
         print("Complete item-item-similar!")
 
     def calculate_similar_user_user(self, path_file_user_train, path_file_user_similar):
-        self.logger.info("Start read path "+ path_file_user_train)
-        self.logger.info("Handle done -> to_csv  path "+ path_file_user_similar)
+        self.logger.info("Start read path " + path_file_user_train)
+        self.logger.info("Handle done -> to_csv  path " + path_file_user_similar)
         user_item_rating = pd.read_csv(path_file_user_train, index_col=0)
 
         users = user_item_rating.index.tolist()
@@ -150,6 +128,3 @@ class Trainner:
         self.logger.info("Tinh xong ")
         users_items_userbase.to_csv(path_file_user_similar, sep=',')
         self.logger.info("Caclutor Complete !")
-
-
-

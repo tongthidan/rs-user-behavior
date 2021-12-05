@@ -5,7 +5,7 @@ import os
 from common.constants import Constants
 from controller.main_controller import MainController
 from training.Spliter import Spliter
-from training.trainingdata import Trainner
+from training.Training import Trainner
 
 
 def conf_log():

@@ -1,7 +1,7 @@
 import logging
 
 from inout.dataset import DatasetIO
-from training.trainingdata import Trainner
+from training.Training import Trainner
 
 
 class MainController:
