@@ -7,6 +7,10 @@ class Constants:
     DATASET_RATING = PRODUCT_DATASETS_DIRECTORY + "behavior-rating.csv"
     TRAINING_SUB_DATASETS_DIRECTORY = "data\\sub_data\\training\\"
     TESTING_SUB_DATASETS_DIRECTORY = "data\\sub_data\\testing\\"
+    USER_ITEM_DATASETS_DIRECTORY = "data\\data_cf\\cosin\\"
+    USER_ITEM_DATASETS_NORMAL_DIRECTORY = "data\\data_cf\\normal\\"
+    USER_SIMILAR_DATASETS_DIRECTORY = "data\\data_similar\\user_similar\\"
+    ITEM_SIMILAR_DATASETS_DIRECTORY = "data\\data_similar\\item_similar\\"
 
 
 class ValueContext:

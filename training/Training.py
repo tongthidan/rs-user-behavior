@@ -14,23 +14,17 @@ class Trainner:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def calculate_sdv_matrix_rating(self, matrix_rating, items, users):
-        matrix_A_xap_xi = pd.DataFrame(index=users, columns=items)
-        u, s, vh = np.linalg.svd(matrix_rating, full_matrices=False)
-        smat = np.diag(s)
-        matrix_A_xap_xi = u.dot(smat).dot(vh)
-        savetxt(Constants.DATASET_MATRIX_TRAIN_manh1, matrix_A_xap_xi, delimiter=',')
-
-    def convert_rating_to_user_item(self, path_file_in, path_file_train):
+    def convert_rating_to_user_item(self, file_name):
         try:
-            print(Constants.DATASET_TRAIN_MANH1)
+            path = Constants.TRAINING_SUB_DATASETS_DIRECTORY
+            path_file_in = path + file_name
             ratings = pd.read_csv(path_file_in, delimiter=',')
+            file_user_hotel = "user_hotel_" + file_name
 
             users = ratings.loc[0:, 'user_id'].unique()
             hotels = ratings.loc[0:, 'hotel_id'].unique()
 
             matrix_rating = pd.DataFrame(index=users, columns=hotels, dtype='float64')
-            # matrix_rating_xapxi = pd.DataFrame(index=users, columns=hotels, dtype='float64')
 
             total_row = len(ratings)
             for i in range(0, total_row):
@@ -53,18 +47,30 @@ class Trainner:
                     score = matrix_rating.loc[userId, hotelId]
                     if math.isnan(score):
                         matrix_rating.loc[userId, hotelId] = 0
-            # matrix_rating.to_csv(path_file_train, sep=',')
+
+            path_normal_expor = Constants.USER_ITEM_DATASETS_NORMAL_DIRECTORY + file_user_hotel
+            matrix_rating.to_csv(path_normal_expor, sep=',')
+            logging.info("Parse to csv done !")
             # tinh svd
             self.logger.info("Start calculate sdv")
-            self.calculate_sdv_matrix_rating(matrix_rating, hotels, users)
+            self.calculate_sdv_matrix_rating(matrix_rating, hotels, users, file_user_hotel)
         except Exception as e1:
             self.logger.exception(e1)
 
-    def calculate_similar_item_item(self, path_file_item_train, path_file_item_similar):
+    def calculate_sdv_matrix_rating(self, matrix_rating, items, users, path_file_user_hotel):
+        matrix_A_xap_xi = pd.DataFrame(index=users, columns=items)
+        u, s, vh = np.linalg.svd(matrix_rating, full_matrices=False)
+        smat = np.diag(s)
+        matrix_A_xap_xi = u.dot(smat).dot(vh)
+        a = np.asarray(matrix_A_xap_xi)
+        path_out = Constants.USER_ITEM_DATASETS_DIRECTORY + path_file_user_hotel
+        savetxt(path_out, a, delimiter=',')
 
-        user_item_rating = pd.read_csv(path_file_item_train, index_col=0)
+    def calculate_similar_item_item(self, file_name):
+        path = Constants.USER_ITEM_DATASETS_DIRECTORY
+        file_name_user_hotel = path + file_name
+        user_item_rating = pd.read_csv(file_name_user_hotel, index_col=0)
         items = user_item_rating.columns.tolist()
-
         item_base = pd.DataFrame(index=items, columns=items)
         num_item = len(items)
 
@@ -90,14 +96,16 @@ class Trainner:
                     self.logger.exception(e)
 
                 self.logger.info(str(i) + "/" + str(num_item))
-
-        item_base.to_csv(path_file_item_similar)
+        file_name_out = "item_item_similar_" + file_name
+        path_out = Constants.ITEM_SIMILAR_DATASETS_DIRECTORY + file_name_out
+        logging.info("Path item-item-similar: " + path_out)
+        item_base.to_csv(path_out)
         print("Complete item-item-similar!")
 
-    def calculate_similar_user_user(self, path_file_user_train, path_file_user_similar):
-        self.logger.info("Start read path " + path_file_user_train)
-        self.logger.info("Handle done -> to_csv  path " + path_file_user_similar)
-        user_item_rating = pd.read_csv(path_file_user_train, index_col=0)
+    def calculate_similar_user_user(self, file_name):
+        path = Constants.USER_ITEM_DATASETS_DIRECTORY
+        path_in = path + file_name
+        user_item_rating = pd.read_csv(path_in, index_col=0)
 
         users = user_item_rating.index.tolist()
 
@@ -125,6 +133,8 @@ class Trainner:
 
                 except Exception as e:
                     self.logger.error(e)
-        self.logger.info("Tinh xong ")
-        users_items_userbase.to_csv(path_file_user_similar, sep=',')
-        self.logger.info("Caclutor Complete !")
+                self.logger.info(str(i) + "/" + str(num_users))
+        file_name_out = "user_user_similar_" + file_name
+        path_out = Constants.USER_ITEM_DATASETS_DIRECTORY + file_name_out
+        users_items_userbase.to_csv(path_out, sep=',')
+        self.logger.info("Calculate user-user-similar complete  !!!")
