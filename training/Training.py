@@ -25,7 +25,6 @@ class Trainner:
             hotels = ratings.loc[0:, 'hotel_id'].unique()
 
             matrix_rating = pd.DataFrame(index=users, columns=hotels, dtype='float64')
-
             total_row = len(ratings)
             for i in range(0, total_row):
                 try:
@@ -50,21 +49,23 @@ class Trainner:
 
             path_normal_expor = Constants.USER_ITEM_DATASETS_NORMAL_DIRECTORY + file_user_hotel
             matrix_rating.to_csv(path_normal_expor, sep=',')
+            # matrix_rating_svd.insert(0, " ", np.array(users))
             logging.info("Parse to csv done !")
             # tinh svd
             self.logger.info("Start calculate sdv")
-            self.calculate_sdv_matrix_rating(matrix_rating, hotels, users, file_user_hotel)
+            userIds = ratings.loc[0:, 'user_id'].unique().tolist()
+            hotelIds = ratings.loc[0:, 'hotel_id'].unique().tolist()
+            self.calculate_sdv_matrix_rating(matrix_rating, hotelIds, userIds, file_user_hotel)
         except Exception as e1:
             self.logger.exception(e1)
 
     def calculate_sdv_matrix_rating(self, matrix_rating, items, users, path_file_user_hotel):
-        matrix_A_xap_xi = pd.DataFrame(index=users, columns=items)
         u, s, vh = np.linalg.svd(matrix_rating, full_matrices=False)
         smat = np.diag(s)
         matrix_A_xap_xi = u.dot(smat).dot(vh)
-        a = np.asarray(matrix_A_xap_xi)
+        matrix_A_xap_xi = pd.DataFrame.from_records(matrix_A_xap_xi, index=users, columns=items)
         path_out = Constants.USER_ITEM_DATASETS_DIRECTORY + path_file_user_hotel
-        savetxt(path_out, a, delimiter=',')
+        matrix_A_xap_xi.to_csv(path_out, sep=',')
 
     def calculate_similar_item_item(self, file_name):
         path = Constants.USER_ITEM_DATASETS_DIRECTORY
@@ -135,6 +136,6 @@ class Trainner:
                     self.logger.error(e)
                 self.logger.info(str(i) + "/" + str(num_users))
         file_name_out = "user_user_similar_" + file_name
-        path_out = Constants.USER_ITEM_DATASETS_DIRECTORY + file_name_out
+        path_out = Constants.USER_SIMILAR_DATASETS_DIRECTORY + file_name_out
         users_items_userbase.to_csv(path_out, sep=',')
         self.logger.info("Calculate user-user-similar complete  !!!")

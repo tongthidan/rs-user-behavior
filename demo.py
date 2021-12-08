@@ -4,6 +4,7 @@ import os
 
 from common.constants import Constants
 from controller.main_controller import MainController
+from training.Recommender import Recommender
 from training.Spliter import Spliter
 from training.Training import Trainner
 
@@ -22,13 +23,21 @@ if __name__ == '__main__':
     # split.get_data_train_test()
     # split.split_data_context()
     train = Trainner()
-    train.convert_rating_to_user_item("train_dataset_0_0_0.csv")
+    # convert to matrix
     # for filename in os.listdir(Constants.TRAINING_SUB_DATASETS_DIRECTORY):
     #     logging.info("Convert file name " + filename)
     #     train.convert_rating_to_user_item(filename)
     # print("Calculate done  !!! ")
+
+    # calculate similar
     # for filename in os.listdir(Constants.USER_ITEM_DATASETS_DIRECTORY):
     #     logging.info("Calculate item-item-similar  with file " + filename)
-    #     # train.calculate_similar_item_item(filename)
+    #     train.calculate_similar_item_item(filename)
     #     train.calculate_similar_user_user(filename)
     # print("Calculate all done  !!! ")
+
+    # predict- recomendation
+    recommender = Recommender("_0_0_0")
+    print("Top 10 recommend cho 100000659781431 la: ")
+
+    print(recommender.recommend_top_ten_by_user(100000659781431))
