@@ -103,3 +103,8 @@ class Recommender:
         result_name = "result_predict" + context + ".csv"
         path_out = Constants.RESULT_PREDICT_DATASETS_DIRECTORY + result_name
         result.to_csv(path_out, sep=',')
+
+    def get_score_predict(self, userId, hotelId, context):
+        self.read_config(context)
+        score = self.get_score_user_item(userId, hotelId)
+        return score
