@@ -11,6 +11,7 @@ class Constants:
     USER_ITEM_DATASETS_NORMAL_DIRECTORY = "data\\data_cf\\normal\\"
     USER_SIMILAR_DATASETS_DIRECTORY = "data\\data_similar\\user_similar\\"
     ITEM_SIMILAR_DATASETS_DIRECTORY = "data\\data_similar\\item_similar\\"
+    RESULT_PREDICT_DATASETS_DIRECTORY = "data\\data_cf\\result_predict\\"
 
 
 class ValueContext:

@@ -1,3 +1,7 @@
+import json
+import logging
+from cmath import nan
+
 import pandas as pd
 
 from common.constants import Constants
@@ -5,8 +9,10 @@ from entity.Hotel import Hotel
 
 
 class Recommender:
-    def __init__(self, context):
+    def __init__(self):
+        pass
 
+    def read_config(self, context):
         self.item_item = pd.read_csv(
             Constants.ITEM_SIMILAR_DATASETS_DIRECTORY + "item_item_similar_user_hotel_train_dataset" + context + ".csv",
             index_col=0)
@@ -18,7 +24,8 @@ class Recommender:
             index_col=0)
         self.items = pd.read_csv(Constants.PRODUCT_DATASETS_DIRECTORY + "tblhotel.csv")
 
-    def recommend_top_ten_by_user(self, userId):
+    def get_top_ten_predict_for_user(self, userId, context):
+        self.read_config(context)
         rating_by_user = self.user_hotel.loc[(self.user_hotel.index == userId)]
         not_rating = []
         items = self.user_hotel.columns.tolist()
@@ -38,11 +45,14 @@ class Recommender:
             item.id = itemId
             item.name = name
             item.score = score
-
             score_not_rating.append(item)
 
         list_sorted = sorted(score_not_rating, key=lambda x: x.score, reverse=True)[:10]
-        return list_sorted[0:10]
+
+        list_hotel_json = []
+        for hotel in list_sorted:
+            list_hotel_json.append(json.dumps(hotel.__dict__))
+        return list_hotel_json
 
     def calculate_similar(self, rating, itemsimilarity):
         result = 0
@@ -64,4 +74,32 @@ class Recommender:
     def get_name_hotel(self, itemId):
         hotel_matrix = pd.DataFrame(self.items)
         hotel = hotel_matrix.loc[self.items.hotel_id == itemId]
-        return str(hotel)
+        json = hotel.name
+        return str(json)
+
+    def result_context_predict(self, context):
+        print("Start handle context " + context)
+        self.read_config(context)
+        userIds = self.user_hotel.index
+        result = pd.DataFrame(index=userIds, columns=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+        for i in range(0, len(userIds)):
+            userid = userIds[i]
+            logging.info("Start calculate predict top 10")
+            top10 = self.get_top_ten_predict_for_user(userid, context)
+            value = []
+            for h in top10:
+                y = json.loads(h)
+                itemIdRe = y["id"]
+                value.append(itemIdRe)
+            value_get_size = 10 - len(value)
+            if (len(value) < 10):
+                for t in range(10 - value_get_size, 10):
+                    value.insert(t, nan)
+            else:
+                value = value
+            result.loc[userid] = value
+
+        result_name = "result_predict" + context + ".csv"
+        path_out = Constants.RESULT_PREDICT_DATASETS_DIRECTORY + result_name
+        result.to_csv(path_out, sep=',')

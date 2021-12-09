@@ -37,7 +37,13 @@ if __name__ == '__main__':
     # print("Calculate all done  !!! ")
 
     # predict- recomendation
-    recommender = Recommender("_0_0_0")
-    print("Top 10 recommend cho 100000659781431 la: ")
-
-    print(recommender.recommend_top_ten_by_user(100000659781431))
+    recommender = Recommender()
+    # recommender.result_context_predict("_0_0_0")
+    recommender.result_context_predict("_0_0_1")
+    recommender.result_context_predict("_0_1_0")
+    recommender.result_context_predict("_0_1_1")
+    recommender.result_context_predict("_1_0_0")
+    recommender.result_context_predict("_1_0_1")
+    recommender.result_context_predict("_1_1_0")
+    # recommender.result_context_predict("_1_1_1")
+    print("Calculate result predict done !!! ")
