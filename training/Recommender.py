@@ -19,9 +19,9 @@ class Recommender:
         self.user_hotel = pd.read_csv(
             Constants.USER_ITEM_DATASETS_NORMAL_DIRECTORY + "user_hotel_train_dataset" + context + ".csv",
             index_col=0)
-        self.user_user = pd.read_csv(
-            Constants.USER_SIMILAR_DATASETS_DIRECTORY + "user_user_similar_user_hotel_train_dataset" + context + ".csv",
-            index_col=0)
+        # self.user_user = pd.read_csv(
+        #     Constants.USER_SIMILAR_DATASETS_DIRECTORY + "user_user_similar_user_hotel_train_dataset" + context + ".csv",
+        #     index_col=0)
         self.items = pd.read_csv(Constants.PRODUCT_DATASETS_DIRECTORY + "tblhotel.csv")
 
     def get_top_ten_predict_for_user(self, userId, context):
@@ -66,10 +66,14 @@ class Recommender:
 
     def get_score_user_item(self, userId, itemId):
         # print(self.user_item)
-        ratings_item = self.user_hotel.loc[userId, :].tolist()
-        similar_item = self.item_item.loc[itemId, :].tolist()
-        value = self.calculate_similar(ratings_item, similar_item)
-        return value
+        try:
+            ratings_item = self.user_hotel.loc[userId, :].tolist()
+            similar_item = self.item_item.loc[itemId, :].tolist()
+            value = self.calculate_similar(ratings_item, similar_item)
+            return value
+        except Exception as e1:
+            print(e1.__cause__)
+            return 0
 
     def get_name_hotel(self, itemId):
         hotel_matrix = pd.DataFrame(self.items)
@@ -108,3 +112,11 @@ class Recommender:
         self.read_config(context)
         score = self.get_score_user_item(userId, hotelId)
         return score
+
+    def get_score_user_item_user_similar(self, userId, itemId, context):
+        # print(self.user_item)
+        self.read_config(context)
+        ratings_item = self.user_hotel.loc[userId, :].tolist()
+        similar_user = self.user_user.loc[userId, :].tolist()
+        value = self.calculate_similar(ratings_item, similar_user)
+        return value

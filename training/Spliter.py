@@ -42,8 +42,8 @@ class Spliter:
         # print(data_train)
 
     def split_data_context(self):
-        # data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_testing.csv")
-        data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_training.csv")
+        data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_testing.csv")
+        # data = pd.read_csv(Constants.TRAINING_DATASETS_DIRECTORY + "behavior_rating_official_training.csv")
 
         like = [0, 1]
         comment = [0, 1]
@@ -64,9 +64,9 @@ class Spliter:
                                            & (data['is_comment'] == in2) & (data['is_post'] == in3)]
 
                     print(data_filter)
-                    data_filter.to_csv(Constants.TRAINING_SUB_DATASETS_DIRECTORY + "train_" + filename + ".csv",
-                                       index=False)
-                    # data_filter.to_csv(Constants.TESTING_SUB_DATASETS_DIRECTORY + "test_" + filename + ".csv",
+                    # data_filter.to_csv(Constants.TRAINING_SUB_DATASETS_DIRECTORY + "train_" + filename + ".csv",
                     #                    index=False)
+                    data_filter.to_csv(Constants.TESTING_SUB_DATASETS_DIRECTORY + "test_" + filename + ".csv",
+                                       index=False)
 
         print("Complete !!")
