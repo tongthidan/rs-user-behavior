@@ -28,7 +28,7 @@ class Testing:
             value_prediction = recommend.get_score_predict(userid, itemid, context)
             print("Predict : ",value_prediction)
             value_expect = record['rate_star']
-            print("Value rate_star : ", value_expect)
+            # print("Value rate_star : ", value_expect)
 
             numerator_rmse += math.pow(value_expect - value_prediction, 2)
 

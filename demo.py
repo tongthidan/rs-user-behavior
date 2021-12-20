@@ -20,11 +20,11 @@ def conf_log():
 if __name__ == '__main__':
     conf_log()
     # split dataset
-    # split = Spliter()
+    split = Spliter()
     # split.get_data_train_test()
     # split.split_data_context()
     train = Trainner()
-    # convert to matrix
+    # # convert to matrix
     # for filename in os.listdir(Constants.TRAINING_SUB_DATASETS_DIRECTORY):
     #     logging.info("Convert file name " + filename)
     #     train.convert_rating_to_user_item(filename)
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     # calculate similar
     # for filename in os.listdir(Constants.USER_ITEM_DATASETS_DIRECTORY):
     #     logging.info("Calculate item-item-similar  with file " + filename)
-    #     # train.calculate_similar_item_item(filename)
-    #     train.calculate_similar_user_user(filename)
+    #     train.calculate_similar_item_item(filename)
+    #     # train.calculate_similar_user_user(filename)
     # print("Calculate all done  !!! ")
 
     # predict- recomendation
@@ -56,6 +56,6 @@ if __name__ == '__main__':
     # test.test_pre_filtering("_0_1_0")
     # test.test_pre_filtering("_0_1_1")
     test.test_pre_filtering("_1_0_0")
-    test.test_pre_filtering("_1_0_1")
-    test.test_pre_filtering("_1_1_0")
+    # test.test_pre_filtering("_1_0_1")
+    # test.test_pre_filtering("_1_1_0")
     # test.test_pre_filtering("_1_1_1")
